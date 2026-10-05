@@ -111,6 +111,23 @@ describe('dist', () => {
     expect(clicks).toContain('data-preview="clicks"');
   });
 
+  it('у главной и каждого проекта своё превью 1200×630 для мессенджеров', () => {
+    const ogOf = (html: string) => html.match(/<meta property="og:image" content="([^"]+)"/)?.[1];
+    const pngSize = (path: string) => {
+      const png = readFileSync(path);
+      return [png.readUInt32BE(16), png.readUInt32BE(20)];
+    };
+
+    expect(ogOf(read(join(DIST, 'index.html')))).toBe(`https://${SITE_HOST}/og.png`);
+    expect(pngSize(join(DIST, 'og.png'))).toEqual([1200, 630]);
+
+    for (const slug of readdirSync(join(process.cwd(), 'src/content/projects')).map((f) => f.replace(/\.md$/, ''))) {
+      const html = read(join(DIST, 'projects', slug, 'index.html'));
+      expect(ogOf(html), slug).toBe(`https://${SITE_HOST}/og/${slug}.png`);
+      expect(pngSize(join(DIST, 'og', `${slug}.png`)), slug).toEqual([1200, 630]);
+    }
+  });
+
   it('есть страница 404', () => {
     expect(existsSync(join(DIST, '404.html'))).toBe(true);
   });

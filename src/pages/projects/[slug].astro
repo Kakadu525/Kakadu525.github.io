@@ -22,7 +22,7 @@ const { Content } = await render(project);
 const d = project.data;
 const links = [...(d.repo ? [{ label: 'github', href: d.repo }] : []), ...d.links];
 ---
-<Layout title={`${d.title} · Дмитрий`} description={d.summary}>
+<Layout title={`${d.title} · Дмитрий`} description={d.summary} image={`/og/${project.id}.png`}>
   <div class="crumbs wrap k">
     <span>
       <a href="/">kakadu525<span class="accent">_</span></a> /
