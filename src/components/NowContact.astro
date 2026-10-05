@@ -1,0 +1,36 @@
+---
+import { site } from '../data/site';
+---
+<div class="duo wrap block">
+  <section id="now" class="box t" data-name="now" data-label="status" data-conf="0.94">
+    <h2 class="h">now</h2>
+    <ul class="now">
+      {site.now.map((item) => <li><span class="accent" aria-hidden="true">→</span> {item}</li>)}
+    </ul>
+  </section>
+  <section id="contact" class="box t" data-name="contact" data-label="contact" data-conf="0.99">
+    <h2 class="h">contact</h2>
+    <dl class="contacts">
+      {site.contacts.map((c) => (
+        <Fragment>
+          <dt>{c.key}</dt>
+          <dd><a href={c.href}>{c.label}</a></dd>
+        </Fragment>
+      ))}
+    </dl>
+    <a class="btn btn-primary" href={site.telegram}>написать в telegram →</a>
+  </section>
+</div>
+<style>
+  .duo { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+  .box { padding: 14px 16px; }
+  .h { margin-bottom: 10px; }
+  .now { font-size: 12px; line-height: 1.9; color: var(--text-dim); }
+  .contacts { display: grid; grid-template-columns: 50px minmax(0, 1fr); gap: 4px 8px; margin-bottom: 12px; font-size: 12px; }
+  dt { color: var(--text-muted); }
+  dd a { color: var(--accent); overflow-wrap: anywhere; }
+  dd a:hover { background: var(--accent); color: var(--on-accent); }
+  @media (max-width: 640px) {
+    .duo { grid-template-columns: minmax(0, 1fr); }
+  }
+</style>
