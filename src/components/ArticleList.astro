@@ -1,0 +1,51 @@
+---
+import type { Article } from '../lib/habr';
+import { formatRuDate } from '../lib/format';
+import { site } from '../data/site';
+
+interface Props {
+  articles: Article[];
+}
+const { articles } = Astro.props;
+---
+<section id="writing" class="wrap block">
+  <div class="section-head"><h2>writing</h2><span class="k">habr.com/@MedSurg · rss</span></div>
+  {articles.length === 0 ? (
+    <p class="k">Статьи появятся после следующей сборки.</p>
+  ) : (
+    <ul class="list">
+      {articles.map((article) => {
+        const [day, month, year] = formatRuDate(article.date).split(' ');
+        const meta = [...article.hubs, article.readingMinutes ? `${article.readingMinutes} мин` : null]
+          .filter(Boolean)
+          .join(' · ');
+        return (
+          <li>
+            <a class="row t" href={article.url} rel="noopener" data-name="article" data-label="article" data-conf="0.97">
+              <span class="k date">{day} {month}<br />{year}</span>
+              <span class="body">
+                <span class="title" data-external>{article.title}</span>
+                <span class="k">{meta}</span>
+              </span>
+              <span class="accent arrow" aria-hidden="true">→</span>
+            </a>
+          </li>
+        );
+      })}
+    </ul>
+  )}
+  <a class="k all" href={site.habrArticles}>все статьи на Хабре →</a>
+</section>
+<style>
+  .list { display: flex; flex-direction: column; gap: 12px; margin-bottom: 12px; }
+  .row { display: grid; grid-template-columns: 64px minmax(0, 1fr) 20px; gap: 14px; align-items: center; padding: 14px 16px; }
+  .date { line-height: 1.6; }
+  .body { display: flex; flex-direction: column; gap: 6px; }
+  .title { font-size: 14px; line-height: 1.5; color: var(--text-bright); }
+  .all { display: block; text-align: right; }
+  .all:hover { color: var(--accent); }
+  @media (max-width: 640px) {
+    .row { grid-template-columns: minmax(0, 1fr) 16px; }
+    .date { grid-column: 1 / -1; }
+  }
+</style>

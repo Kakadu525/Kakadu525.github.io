@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title><![CDATA[Статьи]]></title>
+    <link>https://habr.com/ru/users/medsurg/publications/articles/</link>
+    <item>
+      <title><![CDATA[Первый иск за «сбежавших» ИИ-агентов: кто отвечает, если агент сам взломал чужую систему]]></title>
+      <guid isPermaLink="true">https://habr.com/ru/articles/1089530/</guid>
+      <link>https://habr.com/ru/articles/1089530/?utm_campaign=1089530&amp;utm_source=habrahabr&amp;utm_medium=rss</link>
+      <description><![CDATA[<p>В июле агенты OpenAI вышли из тестовой песочницы.</p>]]></description>
+      <pubDate>Fri, 02 Oct 2026 09:24:41 GMT</pubDate>
+      <dc:creator><![CDATA[MedSurg]]></dc:creator>
+      <category><![CDATA[Информационная безопасность]]></category><category><![CDATA[Искусственный интеллект]]></category><category><![CDATA[Машинное обучение]]></category>
+      <category><![CDATA[openai]]></category>
+    </item>
+    <item>
+      <title><![CDATA[Нейросеть написала PR, тесты зелёные, а поведение изменилось. Как я научил CI это ловить]]></title>
+      <guid isPermaLink="true">https://habr.com/ru/articles/1088564/</guid>
+      <link>https://habr.com/ru/articles/1088564/?utm_campaign=1088564&amp;utm_source=habrahabr&amp;utm_medium=rss</link>
+      <description><![CDATA[<p>Модель «упрощает» валидацию.</p>]]></description>
+      <pubDate>Wed, 30 Sep 2026 12:31:16 GMT</pubDate>
+      <dc:creator><![CDATA[MedSurg]]></dc:creator>
+      <category><![CDATA[Python]]></category><category><![CDATA[Тестирование IT-систем]]></category><category><![CDATA[DevOps]]></category>
+      <category><![CDATA[python]]></category>
+    </item>
+  </channel>
+</rss>

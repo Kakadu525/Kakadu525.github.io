@@ -5,14 +5,18 @@ import Hero from '../components/Hero.astro';
 import Stats from '../components/Stats.astro';
 import FeaturedProject from '../components/FeaturedProject.astro';
 import ProjectCard from '../components/ProjectCard.astro';
+import ArticleList from '../components/ArticleList.astro';
+import articlesData from '../data/articles.json';
 import { site } from '../data/site';
 import { pluralRu } from '../lib/format';
+import type { Article } from '../lib/habr';
 
 const projects = (await getCollection('projects')).sort((a, b) => a.data.order - b.data.order);
 const featured = projects.find((p) => p.data.featured);
 const rest = projects.filter((p) => p !== featured);
 const repoCount = projects.filter((p) => p.data.repo).length;
-const articleCount = 2;
+const articles = [...(articlesData as Article[])].sort((a, b) => b.date.localeCompare(a.date));
+const articleCount = articles.length;
 const stats = [
   { value: repoCount, label: `open source ${pluralRu(repoCount, ['репозиторий', 'репозитория', 'репозиториев'])}` },
   { value: articleCount, label: `${pluralRu(articleCount, ['статья', 'статьи', 'статей'])} на Хабре` },
@@ -28,6 +32,7 @@ const stats = [
     {featured && <FeaturedProject project={featured} />}
     <div class="grid">{rest.map((project) => <ProjectCard project={project} />)}</div>
   </section>
+  <ArticleList articles={articles} />
 </Layout>
 <style>
   .grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
