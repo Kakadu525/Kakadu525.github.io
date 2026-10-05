@@ -1,0 +1,20 @@
+---
+import Layout from '../layouts/Layout.astro';
+---
+<Layout title="Страница не найдена · Дмитрий">
+  <section class="wrap lost">
+    <div class="box">
+      <span class="label">page 0.00</span>
+      <h1>404</h1>
+    </div>
+    <p>Детектор не нашёл на этой странице ни одного объекта.</p>
+    <a class="btn btn-primary" href="/">на главную →</a>
+  </section>
+</Layout>
+<style>
+  .lost { padding-top: 80px; padding-bottom: 80px; }
+  .box { position: relative; display: inline-block; margin-bottom: 18px; padding: 10px 16px; border: 1.5px dashed var(--accent-dim); }
+  .label { position: absolute; top: -20px; left: -1.5px; padding: 2px 6px; background: var(--accent-dim); color: var(--on-accent); font-size: 11px; }
+  h1 { font-size: 30px; font-weight: 500; color: var(--text-bright); }
+  p { margin-bottom: 18px; color: var(--text-dim); }
+</style>

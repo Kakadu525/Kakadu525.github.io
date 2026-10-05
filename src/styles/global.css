@@ -94,3 +94,21 @@ img { display: block; max-width: 100%; height: auto; }
   *, *::before, *::after { animation: none !important; transition: none !important; }
   html { scroll-behavior: auto; }
 }
+
+.prose { max-width: 720px; }
+.prose p { margin: 0 0 12px; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
+.prose h2 { margin: 32px 0 12px; font-size: 14px; font-weight: 400; color: var(--text-bright); }
+.prose h2::before { content: '## '; color: var(--accent); }
+.prose code { color: var(--text-bright); font-family: inherit; }
+.prose ol {
+  counter-reset: step; display: grid; gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); margin-bottom: 12px;
+}
+.prose ol li {
+  counter-increment: step; padding: 12px 14px; border: 1px solid var(--line);
+  font-size: 12px; line-height: 1.6; color: var(--text-dim);
+}
+.prose ol li::before { content: counter(step, decimal-leading-zero) ' · '; color: var(--accent); }
+.prose ul { margin-bottom: 12px; }
+.prose ul li { padding-left: 2ch; text-indent: -2ch; font-size: 13px; line-height: 1.75; color: var(--text-dim); }
+.prose ul li::before { content: '- '; color: var(--accent); }
