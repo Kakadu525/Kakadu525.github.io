@@ -1,5 +1,12 @@
 import { describe, expect, it } from 'vitest';
-import { formatAgo, formatRuDate, pluralRu } from '../../src/lib/format';
+import { formatAgo, formatClock, formatRuDate, pluralRu } from '../../src/lib/format';
+
+describe('formatClock', () => {
+  it('ноль', () => expect(formatClock(0)).toBe('00:00:00'));
+  it('секунды отбрасывают миллисекунды', () => expect(formatClock(59_999)).toBe('00:00:59'));
+  it('часы, минуты, секунды', () => expect(formatClock((2 * 3600 + 3 * 60 + 4) * 1000)).toBe('02:03:04'));
+  it('отрицательное время считается нулём', () => expect(formatClock(-5000)).toBe('00:00:00'));
+});
 
 describe('formatRuDate', () => {
   it('форматирует дату публикации', () => {

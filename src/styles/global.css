@@ -23,12 +23,21 @@
 @media (max-width: 640px) {
   :root { --gutter: 16px; }
 }
+@media (min-width: 1100px) {
+  :root { --max: 1200px; --gutter: 40px; }
+  body { font-size: 15px; }
+  .k, .chip { font-size: 12px; }
+}
+@media (min-width: 1600px) {
+  :root { --max: 1360px; --gutter: 56px; }
+}
 
 *, *::before, *::after { box-sizing: border-box; }
 html { background: var(--bg); scroll-behavior: smooth; }
 body {
   margin: 0;
-  background: var(--bg);
+  /* Точечная сетка видна только в полях по бокам: колонка сайта закрашена сплошным фоном. */
+  background: var(--bg) radial-gradient(circle at 1px 1px, #1a2413 1px, transparent 0) 0 0 / 24px 24px fixed;
   color: var(--text);
   font: 400 14px/1.6 var(--font-mono);
   -webkit-font-smoothing: antialiased;
@@ -39,7 +48,10 @@ ul, ol { padding: 0; list-style: none; }
 img { display: block; max-width: 100%; height: auto; }
 :focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; }
 
-.site { position: relative; max-width: var(--max); margin: 0 auto; overflow-x: clip; }
+.site { position: relative; z-index: 1; max-width: var(--max); margin: 0 auto; overflow-x: clip; background: var(--bg); }
+@media (min-width: 1100px) {
+  .site { border-left: 1px solid var(--line); border-right: 1px solid var(--line); }
+}
 .wrap { padding-left: var(--gutter); padding-right: var(--gutter); }
 .block { padding-bottom: 40px; }
 .sr-only {

@@ -30,6 +30,10 @@ import { site } from '../data/site';
   dt { color: var(--text-muted); }
   dd a { color: var(--accent); overflow-wrap: anywhere; }
   dd a:hover { background: var(--accent); color: var(--on-accent); }
+  @media (min-width: 1100px) {
+    .box { padding: 18px 20px; }
+    .now, .contacts { font-size: 13px; }
+  }
   @media (max-width: 640px) {
     .duo { grid-template-columns: minmax(0, 1fr); }
   }

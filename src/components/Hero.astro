@@ -3,6 +3,7 @@ import { site } from '../data/site';
 import DeskCam from './DeskCam.astro';
 ---
 <section id="about" class="hero wrap">
+  <div class="intro">
   <div class="head">
     <div class="name-box">
       <span class="box-label">person <span id="person-conf">0.99</span></span>
@@ -18,6 +19,7 @@ import DeskCam from './DeskCam.astro';
   <ul class="chips stack" aria-label="Стек">
     {site.stack.map((item, i) => <li class="chip" style={`animation-delay:${i * 60}ms`}>{item}</li>)}
   </ul>
+  </div>
   <DeskCam />
 </section>
 <style>
@@ -37,6 +39,14 @@ import DeskCam from './DeskCam.astro';
   }
   .bio { max-width: 560px; margin-bottom: 18px; color: var(--text-dim); font-size: 13px; line-height: 1.7; }
   .stack { margin-bottom: 28px; }
+  /* На широком экране камера встаёт справа от текста, иначе сайт тонет в пустых полях. */
+  @media (min-width: 1100px) {
+    .hero { display: grid; grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: 40px; align-items: center; padding-top: 56px; padding-bottom: 40px; }
+    .stack { margin-bottom: 0; }
+    h1 { font-size: 36px; }
+    .typer { font-size: 15px; }
+    .bio { font-size: 14px; }
+  }
   @media (max-width: 640px) {
     h1 { font-size: 26px; }
   }

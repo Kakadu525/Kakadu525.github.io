@@ -18,9 +18,10 @@ function initTracker(): void {
   const show = (el: HTMLElement) => {
     window.clearTimeout(hideTimer);
     const r = el.getBoundingClientRect();
+    // Рамка позиционируется от внутреннего края колонки, а на широком экране у колонки есть бордер.
     const s = site.getBoundingClientRect();
-    box.style.left = `${r.left - s.left - PAD}px`;
-    box.style.top = `${r.top - s.top - PAD}px`;
+    box.style.left = `${r.left - s.left - site.clientLeft - PAD}px`;
+    box.style.top = `${r.top - s.top - site.clientTop - PAD}px`;
     box.style.width = `${r.width + PAD * 2}px`;
     box.style.height = `${r.height + PAD * 2}px`;
     box.style.opacity = '1';

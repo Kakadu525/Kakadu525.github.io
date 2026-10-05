@@ -1,0 +1,103 @@
+<div class="vf" aria-hidden="true">
+  <span class="ch ch-h" id="vf-h"></span>
+  <span class="ch ch-v" id="vf-v"></span>
+  <span class="corner tl"></span>
+  <span class="corner tr"></span>
+  <span class="corner bl"></span>
+  <span class="corner br"></span>
+  <div class="rail left">
+    <span class="ticks"></span>
+    <span class="read">
+      <span class="rec blink">●</span> rec <span id="vf-clock">00:00:00</span> · cursor <span id="vf-cursor">0000 × 0000</span>
+    </span>
+  </div>
+  <div class="rail right">
+    <span class="ticks"></span>
+    <span class="read">
+      scroll <span id="vf-scroll">000</span>% · <span id="vf-size">0000×0000</span> · kakadu525.github.io
+    </span>
+  </div>
+</div>
+<style>
+  /* Поля по бокам колонки превращаются в корпус видоискателя. На узких экранах полей нет, и слой не нужен. */
+  .vf { display: none; }
+  @media (min-width: 1320px) and (hover: hover) {
+    .vf { display: block; position: fixed; inset: 0; z-index: 0; pointer-events: none; }
+  }
+  /* Перекрестие лежит под колонкой сайта, поэтому его видно только в полях. */
+  .ch { position: absolute; left: 0; top: 0; opacity: 0; transition: opacity .3s; }
+  .ch-h { width: 100%; height: 0; border-top: 1px dashed #263420; }
+  .ch-v { width: 0; height: 100%; border-left: 1px dashed #263420; }
+  .vf.aim .ch { opacity: 1; }
+  .corner { position: absolute; width: 22px; height: 22px; border: 0 solid #34482a; }
+  .tl { top: 16px; left: 16px; border-top-width: 1.5px; border-left-width: 1.5px; }
+  .tr { top: 16px; right: 16px; border-top-width: 1.5px; border-right-width: 1.5px; }
+  .bl { bottom: 16px; left: 16px; border-bottom-width: 1.5px; border-left-width: 1.5px; }
+  .br { bottom: 16px; right: 16px; border-bottom-width: 1.5px; border-right-width: 1.5px; }
+  .rail { position: absolute; top: 64px; bottom: 64px; width: 40px; }
+  .rail.left { left: 16px; }
+  .rail.right { right: 16px; }
+  .ticks {
+    position: absolute; top: 0; bottom: 0; width: 14px;
+    background:
+      repeating-linear-gradient(to bottom, #34482a 0 1px, transparent 1px 40px) 0 0 / 14px 100% no-repeat,
+      repeating-linear-gradient(to bottom, #1f2b18 0 1px, transparent 1px 8px) 0 0 / 7px 100% no-repeat;
+  }
+  .right .ticks { right: 0; transform: scaleX(-1); }
+  .read {
+    position: absolute; top: 50%; font-size: 11px; color: var(--text-faint); white-space: nowrap;
+    writing-mode: vertical-rl;
+  }
+  /* Левая строка читается снизу вверх, правая сверху вниз: обе смотрят на колонку сайта. */
+  .left .read { left: 22px; transform: translateY(-50%) rotate(180deg); }
+  .right .read { right: 22px; transform: translateY(-50%); }
+</style>
+<script>
+  import { formatClock } from '../lib/format';
+  import { finePointer, reducedMotion } from '../scripts/motion';
+
+  const clock = document.getElementById('vf-clock');
+  const cursor = document.getElementById('vf-cursor');
+  const scroll = document.getElementById('vf-scroll');
+  const size = document.getElementById('vf-size');
+  const lineH = document.getElementById('vf-h');
+  const lineV = document.getElementById('vf-v');
+  const frame = document.querySelector<HTMLElement>('.vf');
+
+  if (clock && cursor && scroll && size && lineH && lineV && frame && finePointer()) {
+    const pad = (n: number, len: number) => String(Math.round(n)).padStart(len, '0');
+    const started = Date.now();
+
+    const updateSize = () => { size.textContent = `${innerWidth}×${innerHeight}`; };
+    const updateScroll = () => {
+      const range = document.documentElement.scrollHeight - innerHeight;
+      scroll.textContent = pad(range > 0 ? (scrollY / range) * 100 : 0, 3);
+    };
+
+    let pending = false;
+    let x = 0;
+    let y = 0;
+    addEventListener('mousemove', (e) => {
+      x = e.clientX;
+      y = e.clientY;
+      if (pending) return;
+      pending = true;
+      requestAnimationFrame(() => {
+        cursor.textContent = `${pad(x, 4)} × ${pad(y, 4)}`;
+        lineH.style.transform = `translateY(${y}px)`;
+        lineV.style.transform = `translateX(${x}px)`;
+        frame.classList.add('aim');
+        pending = false;
+      });
+    }, { passive: true });
+    document.documentElement.addEventListener('mouseleave', () => frame.classList.remove('aim'));
+    addEventListener('scroll', updateScroll, { passive: true });
+    addEventListener('resize', () => { updateSize(); updateScroll(); });
+    updateSize();
+    updateScroll();
+
+    if (!reducedMotion()) {
+      window.setInterval(() => { clock.textContent = formatClock(Date.now() - started); }, 1000);
+    }
+  }
+</script>

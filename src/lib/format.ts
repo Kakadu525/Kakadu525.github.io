@@ -27,3 +27,9 @@ export function formatAgo(fromMs: number, nowMs: number): string {
   if (hours < 24) return `${hours} ч назад`;
   return `${Math.floor(hours / 24)} дн назад`;
 }
+
+export function formatClock(ms: number): string {
+  const total = Math.floor(Math.max(0, ms) / 1000);
+  const two = (n: number) => String(n).padStart(2, '0');
+  return `${two(Math.floor(total / 3600))}:${two(Math.floor(total / 60) % 60)}:${two(total % 60)}`;
+}
