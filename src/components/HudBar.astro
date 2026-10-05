@@ -1,0 +1,32 @@
+<div class="hud wrap k" aria-hidden="true">
+  <span>
+    <span class="rec blink">●</span> frame <span id="hud-frame">0412</span> ·
+    <span id="hud-ms">11.8</span> ms · tracking: <span id="hud-track" class="accent">none</span>
+  </span>
+  <span class="hint">conf ≥ 0.50 · наведи на что угодно</span>
+</div>
+<style>
+  .hud {
+    display: flex; justify-content: space-between; gap: 12px;
+    padding-top: 6px; padding-bottom: 6px; border-bottom: 1px solid var(--line);
+  }
+  @media (max-width: 640px), (hover: none) {
+    .hint { display: none; }
+  }
+</style>
+<script>
+  import { reducedMotion } from '../scripts/motion';
+
+  const frame = document.getElementById('hud-frame');
+  const ms = document.getElementById('hud-ms');
+  if (frame && ms && !reducedMotion()) {
+    let n = 412;
+    window.setInterval(() => {
+      n = (n + 1) % 10000;
+      frame.textContent = String(n).padStart(4, '0');
+    }, 90);
+    window.setInterval(() => {
+      ms.textContent = (10.4 + Math.random() * 3.4).toFixed(1);
+    }, 450);
+  }
+</script>

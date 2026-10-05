@@ -1,0 +1,19 @@
+---
+const sections = ['about', 'projects', 'writing', 'now', 'contact'];
+---
+<header class="nav wrap" id="top">
+  <a class="logo" href="/">kakadu525<span class="accent blink">_</span></a>
+  <nav aria-label="Разделы">
+    {sections.map((id) => <a href={`/#${id}`}>/{id}</a>)}
+  </nav>
+</header>
+<style>
+  .nav {
+    display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap;
+    gap: 8px 18px; padding-top: 14px; padding-bottom: 14px;
+    border-bottom: 1px solid var(--line); font-size: 12px;
+  }
+  .logo { color: var(--text-bright); }
+  nav { display: flex; flex-wrap: wrap; gap: 4px 18px; color: var(--text-muted); }
+  nav a:hover { color: var(--accent); }
+</style>
