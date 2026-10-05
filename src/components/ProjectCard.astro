@@ -1,0 +1,21 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import Preview from './Preview.astro';
+
+interface Props {
+  project: CollectionEntry<'projects'>;
+}
+const { project } = Astro.props;
+const { title, tag, summary, label, conf, preview } = project.data;
+---
+<a class="card t" href={`/projects/${project.id}/`} data-name={title} data-label={label} data-conf={conf}>
+  <span class="top"><span class="title">{title}</span><span class="k">{tag}</span></span>
+  <span class="summary">{summary}</span>
+  <Preview kind={preview} />
+</a>
+<style>
+  .card { display: flex; flex-direction: column; padding: 14px 16px; }
+  .top { display: flex; justify-content: space-between; gap: 8px; margin-bottom: 6px; }
+  .title { font-size: 14px; color: var(--text-bright); }
+  .summary { flex: 1; font-size: 12px; line-height: 1.6; color: var(--text-dim); }
+</style>

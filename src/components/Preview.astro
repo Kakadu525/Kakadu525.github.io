@@ -1,0 +1,91 @@
+---
+interface Props {
+  kind: 'scorer' | 'toolbox' | 'wallet' | 'mm' | 'clicks';
+  size?: 'card' | 'page';
+}
+const { kind, size = 'card' } = Astro.props;
+// Фигурные скобки в шаблоне Astro читаются как выражение, поэтому JSON лежит в переменной.
+const toolboxOut = '{"alg":"HS256","typ":"JWT"}';
+---
+<div class:list={['pv', `pv-${kind}`, `pv-${size}`]} data-preview={kind} aria-hidden="true">
+  {kind === 'scorer' && (
+    <Fragment>
+      <div class="k">$ confidence-score --diff HEAD~1</div>
+      <div class="ln muted">differential · <span class="bright" data-inputs>200</span>/200 inputs</div>
+      <div class="ln danger">✗ counterexample: percent = -0.5</div>
+      <div class="ln muted indent">old → ValueError · new → 0.0</div>
+      <div class="ln score">
+        <span class="bright">score</span>
+        <span class="bar"><span data-bar style="width:35%"></span></span>
+        <span class="danger"><span data-score>35</span>/100</span>
+      </div>
+      <div class="ln danger">verdict: do not merge</div>
+    </Fragment>
+  )}
+  {kind === 'toolbox' && (
+    <Fragment>
+      <div class="muted">› <span data-in>jwt  eyJhbGciOiJIUzI1…</span></div>
+      <div class="accent">‹ <span data-out>{toolboxOut}</span></div>
+    </Fragment>
+  )}
+  {kind === 'wallet' && (
+    <Fragment>
+      <div class="queue">{Array.from({ length: 20 }, () => <span class="cell on"></span>)}</div>
+      <div class="muted">параллельных запросов <span class="bright" data-sent>20</span>/20 <span class="accent" data-ok>✓ баланс сошёлся</span></div>
+    </Fragment>
+  )}
+  {kind === 'mm' && (
+    <Fragment>
+      <span class="muted">msg #<span data-msg>142</span> · правится на месте</span>
+      <span class="pill" data-status>● готово</span>
+    </Fragment>
+  )}
+  {kind === 'clicks' && (
+    <div class="pad">
+      <span class="dot" data-dot></span>
+      <span class="rec-label"><span class="blink">●</span> rec</span>
+      <span class="k loop">loop ×<span data-loop>1</span></span>
+    </div>
+  )}
+</div>
+<style is:global>
+  /* is:global: скрипт превью создаёт элементы на лету, у них нет атрибута скоупа Astro. Всё под префиксом .pv */
+  .pv { display: block; font-size: 11px; }
+  .pv-card:not(.pv-scorer) { min-height: 46px; margin-top: 10px; padding-top: 8px; border-top: 1px dashed var(--line); }
+  .pv-scorer { min-height: 150px; padding: 12px; border: 1px solid var(--line); background: var(--bg-raised); font-size: 12px; line-height: 1.85; }
+  .pv .ln { transition: opacity .25s; }
+  .pv .indent { padding-left: 2ch; }
+  .pv .score { display: flex; align-items: center; gap: 8px; }
+  .pv .bar { position: relative; flex: 1; height: 6px; background: var(--line); }
+  .pv .bar > span { position: absolute; top: 0; bottom: 0; left: 0; background: var(--danger); transition: width .9s cubic-bezier(.2,.8,.2,1); }
+  .pv-toolbox { line-height: 1.7; }
+  .pv-toolbox > div { overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+  .pv .queue { display: flex; gap: 3px; height: 8px; margin-bottom: 8px; }
+  .pv .cell { flex: 1; background: var(--line); transition: background .15s; }
+  .pv .cell.on { background: var(--accent); }
+  .pv-mm { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+  .pv .pill { padding: 1px 7px; border: 1px solid currentColor; color: var(--accent); white-space: nowrap; }
+  .pv .pad { position: relative; height: 40px; border: 1px dashed var(--line); }
+  .pv .dot {
+    position: absolute; z-index: 2; left: 6%; top: 40%; width: 7px; height: 7px;
+    transform: translate(-50%, -50%); background: var(--text-bright);
+    transition: left .45s cubic-bezier(.4,0,.2,1), top .45s cubic-bezier(.4,0,.2,1);
+  }
+  .pv .rec-label { position: absolute; right: 6px; top: 3px; color: var(--danger); }
+  .pv .loop { position: absolute; right: 6px; bottom: 3px; }
+  .pv .ripple {
+    position: absolute; width: 16px; height: 16px; border: 1px solid var(--accent);
+    border-radius: 50%; animation: pv-ripple .6s ease-out both;
+  }
+  .pv-page { font-size: 13px; padding: 16px; }
+  .pv-page.pv-scorer { font-size: 14px; }
+  .pv-page .pad { height: 180px; }
+  .pv-page .queue { height: 14px; }
+  @keyframes pv-ripple {
+    from { transform: translate(-50%, -50%) scale(.3); opacity: 1; }
+    to { transform: translate(-50%, -50%) scale(2.2); opacity: 0; }
+  }
+</style>
+<script>
+  import '../scripts/previews';
+</script>
