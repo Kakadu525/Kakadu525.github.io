@@ -12,3 +12,11 @@ const builtAt = new Date().toISOString();
   }
   .foot a:hover { color: var(--accent); }
 </style>
+<script>
+  import { formatAgo } from '../lib/format';
+
+  const built = document.getElementById('built');
+  if (built?.dataset.built) {
+    built.textContent = formatAgo(Date.parse(built.dataset.built), Date.now());
+  }
+</script>
