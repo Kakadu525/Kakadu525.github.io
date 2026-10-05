@@ -1,0 +1,166 @@
+---
+import { DESK_SCENE, codeLinesSvg } from '../lib/scene';
+import { baseBox, boxesToSvg } from '../lib/detector';
+
+// Стартовые рамки рендерятся на сервере: без JS и с выключенной анимацией сцена всё равно размечена.
+const initialBoxes = boxesToSvg(DESK_SCENE.map(baseBox));
+const codeLines = codeLinesSvg();
+---
+<figure class="cam">
+  <div class="cam-bar" aria-hidden="true">
+    <span>cam0 · рабочее место</span>
+    <span class="rec"><span class="blink">●</span> live</span>
+  </div>
+  <svg id="desk" viewBox="0 0 624 240" role="img" aria-labelledby="desk-title">
+    <title id="desk-title">Камера над рабочим столом. Детектор подписывает рамками монитор, ноутбук, клавиатуру, мышь, кружку, книги и растение.</title>
+    <defs>
+      <clipPath id="desk-screen"><rect x="268" y="32" width="164" height="100" /></clipPath>
+      <clipPath id="desk-laptop"><rect x="118" y="134" width="96" height="46" /></clipPath>
+    </defs>
+    <rect x="0" y="200" width="624" height="40" fill="#0b1008" />
+    <line x1="0" y1="200" x2="624" y2="200" stroke="#34482a" />
+    <g fill="#0f160b" stroke="#34482a" stroke-width="1.2" stroke-linejoin="round">
+      <path d="M50 170 C46 152 30 142 26 122 C40 130 48 142 50 170 Z" />
+      <path d="M50 170 C52 147 62 132 76 118 C72 138 60 152 50 170 Z" />
+      <path d="M50 170 C49 150 50 132 53 110 C57 130 55 152 50 170 Z" />
+      <path d="M34 168 L66 168 L62 198 L38 198 Z" />
+      <path d="M112 128 L220 128 L222 186 L110 186 Z" />
+      <rect x="117" y="133" width="98" height="48" fill="#0a1007" />
+      <path d="M96 187 L236 187 L242 197 L90 197 Z" />
+      <rect x="262" y="26" width="176" height="112" rx="3" />
+      <rect x="267" y="31" width="166" height="102" fill="#0a1007" />
+      <rect x="342" y="138" width="16" height="28" />
+      <rect x="318" y="164" width="64" height="6" />
+      <path d="M286 180 L426 180 L432 196 L280 196 Z" />
+      <path d="M290 185 H422 M288 189 H425 M286 193 H428" stroke="#24331b" fill="none" />
+      <g id="desk-mouse">
+        <rect x="452" y="184" width="20" height="13" rx="6" />
+        <line x1="462" y1="184" x2="462" y2="189" />
+      </g>
+      <path d="M500 152 L534 152 L531 197 L503 197 Z" />
+      <path d="M534 160 C547 160 547 183 532 183" fill="none" />
+      <rect x="561" y="184" width="54" height="13" />
+      <rect x="565" y="173" width="47" height="11" />
+      <rect x="559" y="162" width="52" height="11" />
+    </g>
+    <g fill="none" stroke="#4a6236" stroke-width="1.2">
+      <path class="steam" d="M509 146 C505 138 513 132 509 124" />
+      <path class="steam" style="animation-delay:.9s" d="M518 146 C514 138 522 132 518 124" />
+      <path class="steam" style="animation-delay:1.7s" d="M527 146 C523 138 531 132 527 124" />
+    </g>
+    <g clip-path="url(#desk-screen)"><g id="desk-code" set:html={codeLines} /></g>
+    <g clip-path="url(#desk-laptop)">
+      <g id="desk-term">
+        <rect x="121" y="137" width="52" height="3" fill="#2f4a1f" />
+        <rect x="121" y="144" width="30" height="3" fill="#2f4a1f" />
+        <rect x="121" y="151" width="64" height="3" fill="#9fef00" />
+      </g>
+    </g>
+    <g id="desk-det" set:html={initialBoxes} />
+  </svg>
+  <div class="cam-bar" aria-hidden="true">
+    <span>objects: <span id="desk-count" class="accent">{DESK_SCENE.length}</span></span>
+    <span class="model">yolo11s · 640×360 · 10 Hz</span>
+  </div>
+</figure>
+<style>
+  .cam { border: 1px solid var(--line); background: var(--bg-cam); }
+  svg { display: block; width: 100%; height: auto; }
+  /* HUD живёт в полосах над и под сценой: поверх SVG на узком экране он закрывал рамки. */
+  .cam-bar { display: flex; justify-content: space-between; gap: 12px; padding: 5px 8px; font-size: 11px; color: var(--text-faint); }
+  .steam { animation: steam 2.6s ease-in-out infinite; }
+  @keyframes steam {
+    0% { opacity: 0; transform: translateY(6px); }
+    40% { opacity: .9; }
+    100% { opacity: 0; transform: translateY(-10px); }
+  }
+  @media (max-width: 640px) {
+    .model { display: none; }
+  }
+</style>
+<script>
+  import { LABEL_CHAR_WIDTH, boxesToSvg, createTracks, stepTrack, type Box } from '../lib/detector';
+  import { CODE_LOOP_PX, DESK_SCENE, mouseOffset } from '../lib/scene';
+  import { reducedMotion } from '../scripts/motion';
+
+  const SVG_NS = 'http://www.w3.org/2000/svg';
+  const DETECT_INTERVAL_MS = 100;
+
+  function measureCharWidth(svg: SVGSVGElement): number {
+    const probe = document.createElementNS(SVG_NS, 'text');
+    probe.setAttribute('class', 'det-label');
+    probe.textContent = '0000000000';
+    svg.appendChild(probe);
+    const width = probe.getComputedTextLength() / 10;
+    probe.remove();
+    return width > 0 ? width : LABEL_CHAR_WIDTH;
+  }
+
+  function startTerminal(group: SVGGElement): void {
+    const widths: number[] = [];
+    const draw = () => {
+      widths.push(14 + Math.random() * 64);
+      if (widths.length > 6) widths.shift();
+      const last = widths.length - 1;
+      group.innerHTML =
+        widths
+          .map((w, i) => `<rect x="121" y="${137 + i * 7}" width="${w.toFixed(1)}" height="3" fill="${i === last ? '#9fef00' : '#2f4a1f'}"/>`)
+          .join('') +
+        `<rect class="blink" x="${(124 + widths[last]).toFixed(1)}" y="${136 + last * 7}" width="4" height="5" fill="#9fef00"/>`;
+    };
+    draw();
+    window.setInterval(draw, 700);
+  }
+
+  function initDeskCam(): void {
+    const svg = document.getElementById('desk') as SVGSVGElement | null;
+    const det = document.getElementById('desk-det') as SVGGElement | null;
+    const mouse = document.getElementById('desk-mouse');
+    const code = document.getElementById('desk-code');
+    const term = document.getElementById('desk-term') as SVGGElement | null;
+    const count = document.getElementById('desk-count');
+    if (!svg || !det || !mouse || !code || !term || !count || reducedMotion()) return;
+
+    // Сцена тратит процессор, поэтому вне экрана и в фоновой вкладке она стоит.
+    let visible = true;
+    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; }).observe(svg);
+    const active = () => visible && !document.hidden;
+
+    const charWidth = measureCharWidth(svg);
+    let tracks = createTracks(DESK_SCENE);
+    let offset = 0;
+
+    const animateMouse = (t: number) => {
+      if (active()) {
+        offset = mouseOffset(t);
+        mouse.setAttribute('transform', `translate(${offset.toFixed(1)},0)`);
+      }
+      requestAnimationFrame(animateMouse);
+    };
+    requestAnimationFrame(animateMouse);
+
+    // Детектор опрашивается 10 раз в секунду, а мышь движется каждый кадр, поэтому рамка мыши отстаёт.
+    window.setInterval(() => {
+      if (!active()) return;
+      const boxes: Box[] = [];
+      tracks = tracks.map((track) => {
+        const { next, box } = stepTrack(track, Math.random, offset);
+        if (box) boxes.push(box);
+        return next;
+      });
+      det.innerHTML = boxesToSvg(boxes, charWidth);
+      count.textContent = String(boxes.length);
+    }, DETECT_INTERVAL_MS);
+
+    let scroll = 0;
+    window.setInterval(() => {
+      if (!active()) return;
+      scroll = (scroll + 1) % CODE_LOOP_PX;
+      code.setAttribute('transform', `translate(0,${-scroll})`);
+    }, 80);
+
+    startTerminal(term);
+  }
+
+  initDeskCam();
+</script>

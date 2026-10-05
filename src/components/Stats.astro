@@ -1,0 +1,38 @@
+---
+interface Props {
+  items: { value: number; label: string }[];
+}
+const { items } = Astro.props;
+---
+<ul class="stats wrap" aria-label="Цифры">
+  {items.map(({ value, label }) => (
+    <li class="t" data-name="stats" data-label="metric" data-conf="0.96">
+      <span class="num" data-count={value}>{value}</span>
+      <span class="k">{label}</span>
+    </li>
+  ))}
+</ul>
+<style>
+  .stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; padding-bottom: 40px; }
+  li { display: flex; flex-direction: column; padding: 12px 14px; }
+  .num { font-size: 22px; color: var(--text-bright); }
+  @media (max-width: 640px) {
+    .stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+</style>
+<script>
+  import { reducedMotion } from '../scripts/motion';
+
+  if (!reducedMotion()) {
+    document.querySelectorAll<HTMLElement>('[data-count]').forEach((el) => {
+      const target = Number(el.dataset.count);
+      let value = 0;
+      el.textContent = '0';
+      const timer = window.setInterval(() => {
+        value += 1;
+        el.textContent = String(value);
+        if (value >= target) window.clearInterval(timer);
+      }, target > 5 ? 55 : 260);
+    });
+  }
+</script>

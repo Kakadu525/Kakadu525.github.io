@@ -1,0 +1,68 @@
+---
+import { site } from '../data/site';
+import DeskCam from './DeskCam.astro';
+---
+<section id="about" class="hero wrap">
+  <div class="head">
+    <div class="name-box">
+      <span class="box-label">person <span id="person-conf">0.99</span></span>
+      <h1>{site.name}</h1>
+    </div>
+    <span class="status"><span class="blink">●</span> {site.status}</span>
+  </div>
+  <p class="typer" aria-hidden="true">
+    <span class="faint">&gt; </span><span id="typer" data-phrases={JSON.stringify(site.typewriter)}>{site.typewriter[0]}</span><span class="cursor"></span>
+  </p>
+  <p class="sr-only">{site.typewriter.join('. ')}.</p>
+  <p class="bio">{site.bio}</p>
+  <ul class="chips stack" aria-label="Стек">
+    {site.stack.map((item, i) => <li class="chip" style={`animation-delay:${i * 60}ms`}>{item}</li>)}
+  </ul>
+  <DeskCam />
+</section>
+<style>
+  .hero { padding-top: 40px; padding-bottom: 28px; }
+  .head { display: flex; align-items: center; flex-wrap: wrap; gap: 14px; margin-bottom: 16px; }
+  .name-box { position: relative; margin-top: 20px; padding: 10px 16px; border: 1.5px solid var(--accent); }
+  .box-label {
+    position: absolute; top: -20px; left: -1.5px; padding: 2px 6px;
+    background: var(--accent); color: var(--on-accent); font-size: 11px;
+  }
+  h1 { font-size: 30px; font-weight: 500; line-height: 1.15; color: var(--text-bright); }
+  .status { margin-top: 20px; padding: 3px 8px; border: 1px solid var(--line-strong); color: var(--accent); font-size: 11px; }
+  .typer { min-height: 22px; margin-bottom: 14px; color: var(--text-bright); }
+  .cursor {
+    display: inline-block; width: 8px; height: 14px; margin-left: 2px; vertical-align: -2px;
+    background: var(--accent); animation: blink 1s steps(1) infinite;
+  }
+  .bio { max-width: 560px; margin-bottom: 18px; color: var(--text-dim); font-size: 13px; line-height: 1.7; }
+  .stack { margin-bottom: 28px; }
+  @media (max-width: 640px) {
+    h1 { font-size: 26px; }
+  }
+</style>
+<script>
+  import { nextTyper, type TyperState } from '../lib/typewriter';
+  import { reducedMotion } from '../scripts/motion';
+
+  const typer = document.getElementById('typer');
+  const conf = document.getElementById('person-conf');
+  if (typer && conf && !reducedMotion()) {
+    const phrases: string[] = JSON.parse(typer.dataset.phrases ?? '[]');
+    let state: TyperState = { phrase: 0, chars: phrases[0]?.length ?? 0, deleting: true };
+    const tick = () => {
+      const step = nextTyper(state, phrases);
+      state = step.state;
+      typer.textContent = step.text;
+      window.setTimeout(tick, step.delay);
+    };
+    if (phrases.length > 1) window.setTimeout(tick, 1800);
+
+    let value = 0.41;
+    const rise = window.setInterval(() => {
+      value = Math.min(0.99, value + 0.03);
+      conf.textContent = value.toFixed(2);
+      if (value >= 0.99) window.clearInterval(rise);
+    }, 40);
+  }
+</script>

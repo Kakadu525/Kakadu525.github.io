@@ -1,7 +1,20 @@
 ---
 import Layout from '../layouts/Layout.astro';
+import Hero from '../components/Hero.astro';
+import Stats from '../components/Stats.astro';
 import { site } from '../data/site';
+import { pluralRu } from '../lib/format';
+
+const repoCount = 3;
+const articleCount = 2;
+const stats = [
+  { value: repoCount, label: `open source ${pluralRu(repoCount, ['репозиторий', 'репозитория', 'репозиториев'])}` },
+  { value: articleCount, label: `${pluralRu(articleCount, ['статья', 'статьи', 'статей'])} на Хабре` },
+  { value: site.stats.toolboxUtilities, label: `${pluralRu(site.stats.toolboxUtilities, ['утилита', 'утилиты', 'утилит'])} в dev-toolbox` },
+  { value: site.stats.marketplaceActions, label: 'action в Marketplace' },
+];
 ---
 <Layout>
-  <section id="about" class="wrap block"><h1>{site.name}</h1></section>
+  <Hero />
+  <Stats items={stats} />
 </Layout>
