@@ -10,7 +10,8 @@
   --text-body: #a9b8a0;
   --text-dim: #8a9a80;
   --text-muted: #7d8c74;
-  --text-faint: #5f6d57;
+  /* Не темнее: служебный текст 11px должен держать контраст 4.5:1 и на фоне камеры. */
+  --text-faint: #76856c;
   --accent: #9fef00;
   --accent-dim: #7d9c32;
   --on-accent: #0b0f08;

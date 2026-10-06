@@ -18,7 +18,7 @@ const C = {
   corner: '#34482a',
   bright: '#f2f7ee',
   body: '#a9b8a0',
-  faint: '#5f6d57',
+  faint: '#76856c',
   accent: '#9fef00',
   onAccent: '#0b0f08',
   danger: '#ff6b5e',

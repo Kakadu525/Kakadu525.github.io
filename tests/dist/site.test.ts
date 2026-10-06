@@ -128,6 +128,32 @@ describe('dist', () => {
     }
   });
 
+  it('иконки для экрана телефона и манифест', () => {
+    const html = read(join(DIST, 'index.html'));
+    const pngSize = (path: string) => {
+      const png = readFileSync(path);
+      return [png.readUInt32BE(16), png.readUInt32BE(20)];
+    };
+    expect(html).toContain('<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png"');
+    expect(html).toContain('<link rel="manifest" href="/site.webmanifest"');
+    expect(pngSize(join(DIST, 'icons', 'apple-touch-icon.png'))).toEqual([180, 180]);
+    expect(read(join(DIST, 'favicon.svg'))).toContain('<svg');
+
+    const manifest = JSON.parse(read(join(DIST, 'site.webmanifest')));
+    for (const icon of manifest.icons) {
+      const [w, h] = icon.sizes.split('x').map(Number);
+      expect(pngSize(join(DIST, icon.src)), icon.src).toEqual([w, h]);
+    }
+  });
+
+  it('стили встроены в страницу, основной шрифт грузится заранее', () => {
+    for (const file of htmlFiles()) {
+      expect(read(file), file).not.toContain('rel="stylesheet"');
+    }
+    const html = read(join(DIST, 'index.html'));
+    expect(html).toMatch(/<link rel="preload" href="[^"]+jetbrains-mono-cyrillic-400-normal[^"]*\.woff2" as="font"/);
+  });
+
   it('есть страница 404', () => {
     expect(existsSync(join(DIST, '404.html'))).toBe(true);
   });
